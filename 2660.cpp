@@ -9,7 +9,7 @@ int n;
 int matrix[MAX][MAX];
 int score[MAX];
 
-void bellman(){
+void Floyd(){
     for(int k = 1; k <= n; k++){
         for(int i = 1; i <= n; i++){
             for(int j = 1; j <= n; j++){
@@ -37,7 +37,7 @@ int main(){
         matrix[a][b] = 1;
         matrix[b][a] = 1;
     }
-    bellman();
+    Floyd();
     int hoobo = -1;
     for(int i = 1; i <= n; i++){
         int max = 0;
