@@ -37,9 +37,6 @@ int main(){
     }
     rCount.push_back(count);
     mlCount.push_back(mCount);
-    // for(int c : rCount){
-    //     cout << c << " > ";
-    // }
     for(int c : rCount){
         int t = c+1;
         int count = 0;
