@@ -1,25 +1,47 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <stack>
 #define MAX 10001
 #define MOD 1000000000
 using namespace std;
 
 /*
 
-
-    실패함....
-
+    실패함.
 
 */
 
 struct City{
-    int degree = 0;
-    int indegree = 0;
-    //nIdx, useCount -- useCount는 indegree만큼 쓸수있다
-    vector<pair<int, int>> next;
+    int degree = 0, idx;
+    vector<int> next;
 };
 City city[MAX];
+bool visited[MAX];
+bool finished[MAX];
+vector<int> st;
+int isCycle = 0;
+
+void dfs(int cIdx, int goal){
+    visited[cIdx] = true;
+    st.push_back(cIdx);
+    if(cIdx == goal){
+        for(int idx : st){
+            cout << idx << " ";
+        }
+        cout << '\n';
+        st.pop_back();
+        return;
+    }
+    for(int nIdx : city[cIdx].next){
+        if(!visited[nIdx]){
+            dfs(nIdx, goal);
+            visited[nIdx] = false;
+        }else{
+            cout << "revisited : " << '\n'; 
+        }
+    }
+    st.pop_back();
+}
 
 int main(){
     ios_base::sync_with_stdio(false);
@@ -29,31 +51,14 @@ int main(){
     while(m--){
         int a, b;
         cin >> a >> b;
-        city[a].next.push_back(make_pair(b, 0));
-        city[b].indegree++;
+        city[a].next.push_back(b);
     }
-    queue<int> q;
-    q.push(1);
-    city[1].degree = 1;
-    bool isCycle = false;
-    while(!q.empty()){
-        int cIdx = q.front();
-        q.pop();
-        for(auto it = city[cIdx].next.begin(); it != city[cIdx].next.end(); it++){
-            const int nIdx = it->first;
-            (it->second)++; //다리 사용량 증가
-            if(it->second > city[cIdx].indegree && cIdx != 1){
-                cout << cIdx << "/" << city[cIdx].indegree << "/" << it->second << '\n';
-                cout << "inf" << '\n';
-                return 0;
-            }
-            city[nIdx].degree++;
-            city[nIdx].degree %= MOD;
-            q.push(nIdx);
-        }
-    }
-    if(isCycle) cout << "inf" << '\n';
-    else cout << city[2].degree << '\n';
+    dfs(1, 2);
+    // while(!st.empty()){
+    //     cout << st.top() << " ";
+    //     st.pop();
+    // }
+    // cout << '\n' << isCycle << '\n';
 
     return 0;
 }
