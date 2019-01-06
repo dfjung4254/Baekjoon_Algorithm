@@ -1,20 +1,25 @@
 #include <iostream>
+#include <set>
 using namespace std;
 
-short index[10001];
+int nums[10001];
 
 int main(){
-
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
     int n;
     cin >> n;
-    for(int i = 0; i < n; i++){
-        int input;
-        cin >> input;
-        index[input]++;
+    while(n--){
+        int tp;
+        cin >> tp;
+        nums[tp]++;
     }
-    for(int i = 1; i < 10001; i++){
-        for(int j = 0; j < index[i]; j++){
-            cout << i << '\n';
+
+    for(int tp = 1; tp <= 10000; tp++){
+        if(nums[tp] != 0){
+            for(int i = 0; i < nums[tp]; i++){
+                cout << tp << '\n';
+            }
         }
     }
 
