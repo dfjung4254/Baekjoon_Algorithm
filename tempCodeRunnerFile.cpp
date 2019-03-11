@@ -1,4 +1,7 @@
-    for (int i = 0; i < 4; i++)
-    {
-        _findCase(arr, 0, i);
+cout << "---------------" << '\n';
+    for(int i = 1; i <= n; i++){
+        for(int j = 1; j <= n; j++){
+            cout << matrix[i][j] << " ";
+        }
+        cout << '\n';
     }
