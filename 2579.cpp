@@ -22,11 +22,11 @@ void dp(int cur, int sum, int stack){
         return;
     }
     if(stack != 2){
-        //ÇÑ°è´Ü
+        //ï¿½Ñ°ï¿½ï¿½ï¿½
         dp(cur+1, sum, stack+1);
     }
     if(cur != n-1){
-        //µÎ°è´Ü
+        //ï¿½Î°ï¿½ï¿½ï¿½
         dp(cur+2, sum, 1);
     }
 
