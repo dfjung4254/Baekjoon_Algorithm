@@ -1,27 +1,47 @@
-/* v1을 idx에 따라 오름차순 정렬 */
-    // sort(v1.begin(), v1.end(), [](MyTable &t1, MyTable &t2)->bool{
-    //     return (t1.idx < t2.idx);
-    // });
+#include <iostream>
+#include <cmath>
+using namespace std;
 
-    // /* 헤더 먼저 출력 */
-    // cout << "id" << " ";
-    // for(int i = 1; i < header1.size(); i++){
-    //     cout << header1[i] << " ";
-    // }
-    // for(int i = 1; i < header2.size(); i++){
-    //     cout << header2[i] << " ";
-    // }
-    // cout << '\n';
+int n, r, c;
+int _size;
+int _count = 0;
+int ret = 0;
 
-    // /* v1 출력 */
-    // int vSize1 = v1.size();
-    // for(int i = 0; i < vSize1; i++){
+void dConquer(int size, int iOffset, int jOffset){
 
-    //     MyTable _thisV1 = v1[i];
-    //     cout << _thisV1.idx << " ";
-    //     for(auto it = _thisV1.val.begin(); it != _thisV1.val.end(); it++){
-    //         cout << *it << " ";
-    //     }
-    //     cout << '\n';
+    /*
+    
+        사이즈가 1이면 카운트 아니면 나눔
+    
+    */
 
-    // }
+    if(size == 1){
+        if(iOffset == r && jOffset == c){
+            ret = _count;
+        }
+        _count++;
+    }else{
+        int nSize = size / 2;
+        int n_iOffset = (iOffset + iOffset + size) / 2;
+        int n_jOffset = (jOffset + jOffset + size) / 2;
+        dConquer(nSize, iOffset, jOffset);
+        dConquer(nSize, iOffset, n_jOffset);
+        dConquer(nSize, n_iOffset, jOffset);
+        dConquer(nSize, n_iOffset, n_jOffset);
+    }
+
+}
+
+int main(){
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> n >> r >> c;
+    _size = pow(2, n);
+    
+    dConquer(_size, 0, 0);
+    cout << ret << '\n';
+
+    return 0;
+}
