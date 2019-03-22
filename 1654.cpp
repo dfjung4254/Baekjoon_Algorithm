@@ -1,37 +1,50 @@
 #include <iostream>
-#include <algorithm>
+#include <vector>
 using namespace std;
 
-long long k, n;
-long long lan[100000];
+int k, n;
+vector<long long> lines;
+long long minLength, maxLength;
+
+long long countCompare(long long num){
+
+    long long count = 0;
+    for(long long cur : lines){
+        count += cur / num;
+    }
+    return count;
+
+}
+
+long long find(){
+
+    while(minLength <= maxLength){
+        long long midLength = (minLength + maxLength) / 2;
+        long long kk = countCompare(midLength);
+        if(kk >= n){
+            minLength = midLength + 1;
+        }else{
+            maxLength = midLength - 1;
+        }
+    }
+    return maxLength;
+}
 
 int main(){
 
-    cin >> k >> n;
-    long long max = 0;
-    for(int i = 1; i <= k; i++){
-        cin >> lan[i];
-        if(lan[i] > max){
-            max = lan[i];
-        }
-    }
-    long long right = max;
-    long long left = 1;
-    long long mid = (right+left)/2;
-    while(true){
-        int tmp = 0;
-        for(int i = 1; i <= k; i++){
-            tmp += lan[i]/mid;
-        }
-        if(tmp >= n){
-            left = mid;
-            mid = (right+left)/2;
-        }else{
-            right = mid;
-            mid = (right+left)/2;
-        }
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
 
+    cin >> k >> n;
+    for(int i = 0; i < k; i++){
+        long long tp;
+        cin >> tp;
+        lines.push_back(tp);
+        maxLength += tp;
     }
+    minLength = 1;
+    
+    cout << find() << '\n';
 
     return 0;
 }
