@@ -11,11 +11,18 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
+#include <algorithm>
+#include <random>
+#include <chrono>
 using namespace std;
 
-double exchangeSort(vector<int> &v){
-    /* time start */
-    clock_t ck = clock();
+/* 소트 종류 */
+enum
+{
+    EXCHANGE, MERGE, QUICK
+};
+
+void exchangeSort(vector<int> &v){
     int sz = v.size();
     for (int i = 0; i < sz - 1; i++){
         for (int j = i + 1; j < sz; j++){
@@ -26,77 +33,215 @@ double exchangeSort(vector<int> &v){
             }
         }
     }
-    /* time end */
-    return (double)clock() - ck;
 }
 
-void merge(vector<int> &v, int low1, int high1, int low2, int high2)
+int tp[10000000];
+
+void merge(vector<int> &v, int low, int mid, int high)
 {
-    int init = low1;
-    int end = high2;
-    vector<int> nv;
-    while (low1 <= high1 && low2 <= high2)
-    {
-        if (v[low1] > v[low2])
-        {
-            nv.push_back(v[low2++]);
-        }
-        else
-        {
-            nv.push_back(v[low1++]);
+
+    int i = low;
+    int j = mid + 1;
+    int k = low;
+
+    while(i <= mid && j <= high){
+        if(v[i] < v[j]){
+            tp[k++] = v[i++];
+        }else{
+            tp[k++] = v[j++];
         }
     }
-    while (low1 <= high1)
-    {
-        nv.push_back(v[low1++]);
+    while(i <= mid){
+        tp[k++] = v[i++];
+    } 
+    while(j <= high){
+        tp[k++] = v[j++];
     }
-    while (low2 <= high2)
-    {
-        nv.push_back(v[low2++]);
+    for (int idx = low; idx <= high; idx++){
+        v[idx] = tp[idx];
     }
 
-    int idx = 0;
-    for (int i = init; i <= end; i++)
-    {
-        v[i] = nv[idx++];
-    }
+    // int init = low1;
+    // int end = high2;
+    // vector<int> nv;
+    // while (low1 <= high1 && low2 <= high2)
+    // {
+    //     if (v[low1] > v[low2])
+    //     {
+    //         nv.push_back(v[low2++]);
+    //     }
+    //     else
+    //     {
+    //         nv.push_back(v[low1++]);
+    //     }
+    // }
+    // while (low1 <= high1)
+    // {
+    //     nv.push_back(v[low1++]);
+    // }
+    // while (low2 <= high2)
+    // {
+    //     nv.push_back(v[low2++]);
+    // }
+
+    // int idx = 0;
+    // for (int i = init; i <= end; i++)
+    // {
+    //     v[i] = nv[idx++];
+    // }
 }
 
-void mergeSort(vector<int> &v, int size, int low, int high){
+void mergeSort(vector<int> &v, int low, int high){
 
-    if(size == 1){
-        return;
+    if(low < high){
+        int mid = (low + high) / 2;
+        mergeSort(v, low, mid);
+        mergeSort(v, mid + 1, high);
+        merge(v, low, mid, high);
     }
-    int mid = (low + high) / 2;
-    int n_size = size / 2;
-    mergeSort(v, size - n_size, low, mid);
-    mergeSort(v, n_size, mid + 1, high);
-    merge(v, low, mid, mid + 1, high);
-}
 
-void swap(vector<int> &v, int a, int b){
+    // if(high - low < 2){
+    //     return;
+    // }
 
-    int tp = v[a];
-    v[a] = v[b];
-    v[b] = tp;
-
+    // int mid = (low + high) / 2;
+    // int n_size = size / 2;
+    // mergeSort(v, size - n_size, low, mid);
+    // mergeSort(v, n_size, mid + 1, high);
+    // merge(v, low, mid, mid + 1, high);
 }
 
 void quickSort(vector<int> &v, int low, int high){
 
+    if(low >= high){
+        return;
+    }
+
     int pivot = v[low];
 
-    if(low < high){
-        /* 먼저 파티션 한다 */
-        int i, j;
-        for (int i = low + 1; i <= high; i++){
-            
+    int i = low + 1;
+    int j = high;
+    while(i <= j){
+        
+        while(i <= high && v[i] <= pivot){
+            i++;
         }
+        while(j > low && v[j] >= pivot){
+            j--;
+        }
+
+        if(i > j){
+            int tp = v[j];
+            v[j] = v[low];
+            v[low] = tp;
+        }else{
+            int tp = v[i];
+            v[i] = v[j];
+            v[j] = tp;
+        }
+
     }
+
+    quickSort(v, low, j - 1);
+    quickSort(v, j + 1, high);
+
 }
 
 int d1, d2, d3;
 int rd1, rd2, rd3;
+vector<int> vv[6];
+int vSize[6];
+
+void re_shuffle(vector<int> &v){
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    shuffle(v.begin(), v.end(), default_random_engine(seed));
+}
+
+void makeVector(vector<int> &v, int size){
+
+    /* 오름차순 난수 생성 */
+    for (int i = 1; i <= size; i++)
+    {
+        v.push_back(i);
+    }
+
+}
+
+/* getSortTime */
+double gst(vector<int> &v, int sortType, bool isRand){
+
+    /* 벡터 복사 */
+    vector<int> nv;
+    for(int num : v){
+        nv.push_back(num);
+    }
+
+    if(isRand){
+        re_shuffle(v);
+    }
+
+    /* time start */
+    clock_t ck = clock();
+
+    switch(sortType){
+        case EXCHANGE:
+            exchangeSort(nv);
+            break;
+        case MERGE:
+            mergeSort(nv, 0, nv.size() - 1);
+            break;
+        case QUICK:
+            quickSort(nv, 0, nv.size() - 1);
+            break;
+        default:
+            break;
+    }
+
+    /* time end */
+    return (double)clock() - ck;
+}
+
+void printData()
+{
+
+    cout << '\t' << '\t' << "N=" << vSize[0] << '\t' << '\t' << "N=" << vSize[1] << '\t' << '\t' << "N=" << vSize[2] << '\n';
+    cout << "Exchange Sort"
+         << "\t" << gst(vv[0], EXCHANGE, false) << '\t' << '\t' << gst(vv[1], EXCHANGE, false) << '\t' << '\t' << gst(vv[2], EXCHANGE, false) << '\n';
+    cout << "Quick Sort"
+         << "\t" << gst(vv[0], QUICK, false) << '\t' << '\t' << gst(vv[1], QUICK, false) << '\t' << '\t' << gst(vv[2], QUICK, false) << '\n';
+    cout << '\n';
+    cout << '\t' << '\t' << '\t' << '\t' << "N=" << vSize[3] << '\t' << "N=" << vSize[4] << '\t' << "N=" << vSize[5] << '\n';
+    double d_merge[3][3];
+    double avg_merge[3];
+    for (int i = 0; i < 3; i++){
+        double sum = 0;
+        for (int j = 0; j < 3; j++){
+            d_merge[i][j] = gst(vv[i + 3], MERGE, true);
+            sum += d_merge[i][j];
+        }
+        avg_merge[i] = sum / 3.0;
+    }
+    cout << "Merge Sort" << '\t' << "data1" << '\t' << '\t' << d_merge[0][0] << '\t' << '\t' << d_merge[1][0] << '\t' << '\t' << d_merge[2][0] << '\n';
+    cout << '\t' << '\t' << "data2" << '\t' << '\t' << d_merge[0][1] << '\t' << '\t' << d_merge[1][1] << '\t' << '\t' << d_merge[2][1] << '\n';
+    cout << '\t' << '\t' << "data3" << '\t' << '\t' << d_merge[0][2] << '\t' << '\t' << d_merge[1][2] << '\t' << '\t' << d_merge[2][2] << '\n';
+    cout << '\t' << '\t' << "average" << '\t' << '\t' << avg_merge[0] << '\t' << '\t' << avg_merge[1] << '\t' << '\t' << avg_merge[2] << '\n';
+    double d_quick[3][3];
+    double avg_quick[3];
+    for (int i = 0; i < 3; i++)
+    {
+        double sum = 0;
+        for (int j = 0; j < 3; j++)
+        {
+            d_quick[i][j] = gst(vv[i + 3], QUICK, true);
+            sum += d_quick[i][j];
+        }
+        avg_quick[i] = sum / 3.0;
+    }
+    cout << "Quick Sort" << '\t' << "data1" << '\t' << '\t' << d_quick[0][0] << '\t' << '\t' << d_quick[1][0] << '\t' << '\t' << d_quick[2][0] << '\n';
+    cout << '\t' << '\t' << "data2" << '\t' << '\t' << d_quick[0][1] << '\t' << '\t' << d_quick[1][1] << '\t' << '\t' << d_quick[2][1] << '\n';
+    cout << '\t' << '\t' << "data3" << '\t' << '\t' << d_quick[0][2] << '\t' << '\t' << d_quick[1][2] << '\t' << '\t' << d_quick[2][2] << '\n';
+    cout << '\t' << '\t' << "average" << '\t' << '\t' << avg_quick[0] << '\t' << '\t' << avg_quick[1] << '\t' << '\t' << avg_quick[2] << '\n';
+}
 
 int main(){
 
@@ -106,25 +251,18 @@ int main(){
     srand(static_cast<unsigned int>(time(0)));
 
     ifstream input;
-    input.open("input.txt");
+    input.open("input.txt"); 
 
     if (input.is_open())
     {
-        int tc;
-        input >> tc;
-
-
-    }
-    vector<int> vv; 
-    for (int i = 10000; i > 0; i--){
-        vv.push_back(i);
-    }
-    
-    //mergeSort(vv, vv.size(), 0, vv.size() - 1);
-    cout << exchangeSort(vv) << '\n';
-    for (int i = 0; i < vv.size(); i++){
-        cout << vv[i] << " ";
+        for (int i = 0; i < 6; i++){
+            int tc;
+            input >> tc;
+            vSize[i] = tc;
+            makeVector(vv[i], tc);
+        }
+        printData();
     }
 
-        return 0;
+    return 0;
 }
