@@ -71,6 +71,8 @@ void mergeSort(vector<int> &v, int low, int high){
 
 }
 
+int ct = 0;
+
 void quickSort(vector<int> &v, int low, int high){
 
     int i, j;
@@ -100,6 +102,10 @@ void quickSort(vector<int> &v, int low, int high){
         quickSort(v, low, j - 1);
         quickSort(v, j + 1, high);
     }
+
+    // if(ct > 100){
+    //     return;
+    // }
 
     // if(low >= high){
     //     return;
@@ -167,6 +173,7 @@ void makeVector(vector<int> &v, int size){
 
 }
 
+
 /* getSortTime */
 double gst(vector<int> &v, int sortType, bool isRand){
 
@@ -210,7 +217,7 @@ void printData()
     cout << "Exchange Sort"
          << "\t" << gst(vv[0], EXCHANGE, false) << '\t' << '\t' << gst(vv[1], EXCHANGE, false) << '\t' << '\t' << gst(vv[2], EXCHANGE, false) << '\n';
     cout << "Quick Sort"
-         << "\t" << gst(vv[0], QUICK, false) << '\t' << '\t' << gst(vv[1], QUICK, false) << '\t' << '\t' << gst(vv[2], QUICK, false) << '\n';
+         << "\t" << gst(vv[0], QUICK, true) << '\t' << '\t' << gst(vv[1], QUICK, true) << '\t' << '\t' << gst(vv[2], QUICK, true) << '\n';
     cout << '\n';
 
 
@@ -230,6 +237,8 @@ void printData()
     cout << '\t' << '\t' << "data2" << '\t' << '\t' << d_merge[0][1] << '\t' << '\t' << d_merge[1][1] << '\t' << '\t' << d_merge[2][1] << '\n';
     cout << '\t' << '\t' << "data3" << '\t' << '\t' << d_merge[0][2] << '\t' << '\t' << d_merge[1][2] << '\t' << '\t' << d_merge[2][2] << '\n';
     cout << '\t' << '\t' << "average" << '\t' << '\t' << avg_merge[0] << '\t' << '\t' << avg_merge[1] << '\t' << '\t' << avg_merge[2] << '\n';
+
+
     double d_quick[3][3];
     double avg_quick[3];
     for (int i = 0; i < 3; i++)
@@ -242,16 +251,16 @@ void printData()
         }
         avg_quick[i] = sum / 3.0;
     }
-    // cout << "Quick Sort" << '\t' << "data1" << '\t' << '\t' << d_quick[0][0] << '\t' << '\t' << d_quick[1][0] << '\t' << '\t' << d_quick[2][0] << '\n';
-    // cout << '\t' << '\t' << "data2" << '\t' << '\t' << d_quick[0][1] << '\t' << '\t' << d_quick[1][1] << '\t' << '\t' << d_quick[2][1] << '\n';
-    // cout << '\t' << '\t' << "data3" << '\t' << '\t' << d_quick[0][2] << '\t' << '\t' << d_quick[1][2] << '\t' << '\t' << d_quick[2][2] << '\n';
-    // cout << '\t' << '\t' << "average" << '\t' << '\t' << avg_quick[0] << '\t' << '\t' << avg_quick[1] << '\t' << '\t' << avg_quick[2] << '\n';
+    cout << "Quick Sort" << '\t' << "data1" << '\t' << '\t' << d_quick[0][0] << '\t' << '\t' << d_quick[1][0] << '\t' << '\t' << d_quick[2][0] << '\n';
+    cout << '\t' << '\t' << "data2" << '\t' << '\t' << d_quick[0][1] << '\t' << '\t' << d_quick[1][1] << '\t' << '\t' << d_quick[2][1] << '\n';
+    cout << '\t' << '\t' << "data3" << '\t' << '\t' << d_quick[0][2] << '\t' << '\t' << d_quick[1][2] << '\t' << '\t' << d_quick[2][2] << '\n';
+    cout << '\t' << '\t' << "average" << '\t' << '\t' << avg_quick[0] << '\t' << '\t' << avg_quick[1] << '\t' << '\t' << avg_quick[2] << '\n';
 }
 
 int main(){
 
     ios_base::sync_with_stdio(false);
-    //cin.tie(0);
+    cin.tie(0);
 
     srand(static_cast<unsigned int>(time(0)));
     ifstream input;
@@ -268,6 +277,19 @@ int main(){
         printData();
     }
 
+    // for (int i = 0; i < 10000; i++){
+    //     vv[0].push_back(i + 1);
+    // }
+    // re_shuffle(vv[0]);
+    // for(int a : vv[0]){
+    //     cout << a << " ";
+    // }
+    // cout << '\n';
+    // cout << '\n';
+    // quickSort(vv[0], 0, vv[0].size() - 1);
+    // for(int a : vv[0]){
+    //     cout << a << " ";
+    // }
 
     return 0;
 }
