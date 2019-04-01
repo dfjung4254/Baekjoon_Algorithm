@@ -11,9 +11,6 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
-#include <algorithm>
-#include <random>
-#include <chrono>
 using namespace std;
 
 /* 소트 종류 */
@@ -61,34 +58,6 @@ void merge(vector<int> &v, int low, int mid, int high)
         v[idx] = tp[idx];
     }
 
-    // int init = low1;
-    // int end = high2;
-    // vector<int> nv;
-    // while (low1 <= high1 && low2 <= high2)
-    // {
-    //     if (v[low1] > v[low2])
-    //     {
-    //         nv.push_back(v[low2++]);
-    //     }
-    //     else
-    //     {
-    //         nv.push_back(v[low1++]);
-    //     }
-    // }
-    // while (low1 <= high1)
-    // {
-    //     nv.push_back(v[low1++]);
-    // }
-    // while (low2 <= high2)
-    // {
-    //     nv.push_back(v[low2++]);
-    // }
-
-    // int idx = 0;
-    // for (int i = init; i <= end; i++)
-    // {
-    //     v[i] = nv[idx++];
-    // }
 }
 
 void mergeSort(vector<int> &v, int low, int high){
@@ -100,50 +69,69 @@ void mergeSort(vector<int> &v, int low, int high){
         merge(v, low, mid, high);
     }
 
-    // if(high - low < 2){
-    //     return;
-    // }
-
-    // int mid = (low + high) / 2;
-    // int n_size = size / 2;
-    // mergeSort(v, size - n_size, low, mid);
-    // mergeSort(v, n_size, mid + 1, high);
-    // merge(v, low, mid, mid + 1, high);
 }
 
 void quickSort(vector<int> &v, int low, int high){
 
-    if(low >= high){
-        return;
-    }
-
+    int i, j;
+    int tp;
     int pivot = v[low];
-
-    int i = low + 1;
-    int j = high;
-    while(i <= j){
-        
-        while(i <= high && v[i] <= pivot){
-            i++;
+    if(low < high){
+        i = low;
+        j = high + 1;
+        while(i <= j){
+            do{
+                i++;
+            } while (v[i] < pivot);
+            do{
+                j--;
+            } while (v[j] > pivot);
+            if(i < j){
+                tp = v[i];
+                v[i] = v[j];
+                v[j] = tp;
+            }else{
+                break;
+            }
         }
-        while(j > low && v[j] >= pivot){
-            j--;
-        }
-
-        if(i > j){
-            int tp = v[j];
-            v[j] = v[low];
-            v[low] = tp;
-        }else{
-            int tp = v[i];
-            v[i] = v[j];
-            v[j] = tp;
-        }
-
+        tp = v[j];
+        v[j] = v[low];
+        v[low] = tp;
+        quickSort(v, low, j - 1);
+        quickSort(v, j + 1, high);
     }
 
-    quickSort(v, low, j - 1);
-    quickSort(v, j + 1, high);
+    // if(low >= high){
+    //     return;
+    // }
+
+    // int pivot = v[low];
+
+    // int i = low + 1;
+    // int j = high;
+    // while(i <= j){
+        
+    //     while(i <= high && v[i] <= pivot){
+    //         i++;
+    //     }
+    //     while(j > low && v[j] >= pivot){
+    //         j--;
+    //     }
+
+    //     if(i > j){
+    //         int tp = v[j];
+    //         v[j] = v[low];
+    //         v[low] = tp;
+    //     }else{
+    //         int tp = v[i];
+    //         v[i] = v[j];
+    //         v[j] = tp;
+    //     }
+
+    // }
+
+    // quickSort(v, low, j - 1);
+    // quickSort(v, j + 1, high);
 
 }
 
@@ -153,8 +141,20 @@ vector<int> vv[6];
 int vSize[6];
 
 void re_shuffle(vector<int> &v){
-    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-    shuffle(v.begin(), v.end(), default_random_engine(seed));
+    // unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    // shuffle(v.begin(), v.end(), default_random_engine(seed));
+
+    // int sz = v.size();
+    // cout << rand() % sz << '\n';
+
+    int sz = v.size();
+    for (int i = 0; i < sz; i++){
+        int s1 = rand() % sz;
+        int s2 = rand() % sz;
+        int tp = v[s1];
+        v[s1] = v[s2];
+        v[s2] = tp;
+    }
 }
 
 void makeVector(vector<int> &v, int size){
@@ -172,12 +172,14 @@ double gst(vector<int> &v, int sortType, bool isRand){
 
     /* 벡터 복사 */
     vector<int> nv;
-    for(int num : v){
-        nv.push_back(num);
+    int sz = v.size();
+    for (int i = 0; i < sz; i++)
+    {
+        nv.push_back(v[i]);
     }
 
     if(isRand){
-        re_shuffle(v);
+        re_shuffle(nv);
     }
 
     /* time start */
@@ -210,6 +212,9 @@ void printData()
     cout << "Quick Sort"
          << "\t" << gst(vv[0], QUICK, false) << '\t' << '\t' << gst(vv[1], QUICK, false) << '\t' << '\t' << gst(vv[2], QUICK, false) << '\n';
     cout << '\n';
+
+
+
     cout << '\t' << '\t' << '\t' << '\t' << "N=" << vSize[3] << '\t' << "N=" << vSize[4] << '\t' << "N=" << vSize[5] << '\n';
     double d_merge[3][3];
     double avg_merge[3];
@@ -237,19 +242,18 @@ void printData()
         }
         avg_quick[i] = sum / 3.0;
     }
-    cout << "Quick Sort" << '\t' << "data1" << '\t' << '\t' << d_quick[0][0] << '\t' << '\t' << d_quick[1][0] << '\t' << '\t' << d_quick[2][0] << '\n';
-    cout << '\t' << '\t' << "data2" << '\t' << '\t' << d_quick[0][1] << '\t' << '\t' << d_quick[1][1] << '\t' << '\t' << d_quick[2][1] << '\n';
-    cout << '\t' << '\t' << "data3" << '\t' << '\t' << d_quick[0][2] << '\t' << '\t' << d_quick[1][2] << '\t' << '\t' << d_quick[2][2] << '\n';
-    cout << '\t' << '\t' << "average" << '\t' << '\t' << avg_quick[0] << '\t' << '\t' << avg_quick[1] << '\t' << '\t' << avg_quick[2] << '\n';
+    // cout << "Quick Sort" << '\t' << "data1" << '\t' << '\t' << d_quick[0][0] << '\t' << '\t' << d_quick[1][0] << '\t' << '\t' << d_quick[2][0] << '\n';
+    // cout << '\t' << '\t' << "data2" << '\t' << '\t' << d_quick[0][1] << '\t' << '\t' << d_quick[1][1] << '\t' << '\t' << d_quick[2][1] << '\n';
+    // cout << '\t' << '\t' << "data3" << '\t' << '\t' << d_quick[0][2] << '\t' << '\t' << d_quick[1][2] << '\t' << '\t' << d_quick[2][2] << '\n';
+    // cout << '\t' << '\t' << "average" << '\t' << '\t' << avg_quick[0] << '\t' << '\t' << avg_quick[1] << '\t' << '\t' << avg_quick[2] << '\n';
 }
 
 int main(){
 
     ios_base::sync_with_stdio(false);
-    cin.tie(0);
+    //cin.tie(0);
 
     srand(static_cast<unsigned int>(time(0)));
-
     ifstream input;
     input.open("input.txt"); 
 
@@ -263,6 +267,7 @@ int main(){
         }
         printData();
     }
+
 
     return 0;
 }
