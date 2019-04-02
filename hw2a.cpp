@@ -23,7 +23,7 @@ void exchangeSort(vector<int> &v){
     int sz = v.size();
     for (int i = 0; i < sz - 1; i++){
         for (int j = i + 1; j < sz; j++){
-            if(v[i] > v[j]){
+            if(v[i] < v[j]){
                 int tp = v[i];
                 v[i] = v[j];
                 v[j] = tp;
@@ -42,7 +42,7 @@ void merge(vector<int> &v, int low, int mid, int high)
     int k = low;
 
     while(i <= mid && j <= high){
-        if(v[i] < v[j]){
+        if(v[i] > v[j]){
             tp[k++] = v[i++];
         }else{
             tp[k++] = v[j++];
@@ -126,9 +126,7 @@ void makeVector(vector<int> &v, int size, bool isRand){
         }
     }
 
-
 }
-
 
 /* getSortTime */
 double gst(vector<int> &v, int sortType, bool isRand, int idx){
@@ -165,8 +163,6 @@ void printData()
     cout << "Quick Sort"
          << "\t" << gst(vv, QUICK, false, 0) << '\t' << '\t' << gst(vv, QUICK, false, 1) << '\t' << '\t' << gst(vv, QUICK, false, 2) << '\n';
     cout << '\n';
-
-
 
     cout << '\t' << '\t' << '\t' << '\t' << "N=" << vSize[3] << '\t' << "N=" << vSize[4] << '\t' << "N=" << vSize[5] << '\n';
     double d_merge[3][3];
