@@ -1,12 +1,16 @@
-double d_quick[3][3];
-    // double avg_quick[3];
-    // for (int i = 0; i < 3; i++)
+    // while (dIdx < n)
     // {
-    //     double sum = 0;
-    //     for (int j = 0; j < 3; j++)
+    //     if (dPeople[dIdx].compare(bPeople[m]) == 0)
     //     {
-    //         d_quick[i][j] = gst(vv[i + 3], QUICK, true);
-    //         sum += d_quick[i][j];
+    //         ans.push_back(dPeople[dIdx]);
     //     }
-    //     avg_quick[i] = sum / 3.0;
+    //     dIdx++;
+    // }
+    // while (bIdx < m)
+    // {
+    //     if (bPeople[bIdx].compare(dPeople[n]) == 0)
+    //     {
+    //         ans.push_back(bPeople[bIdx]);
+    //     }
+    //     bIdx++;
     // }
