@@ -1,23 +1,25 @@
 #include <iostream>
 #include <queue>
-using namespace std;
 
-int matrix[101][101];
-int visited[101][101] = {
-    0,
-};
-int dir_i[4] = {0, 1, 0, -1};
-int dir_j[4] = {1, 0, -1, 0};
-int n, m, t;
+using namespace std;
 
 struct Point {
   int i;
   int j;
-  int dist;
   bool hasGram;
 };
 
-queue<Point> q;
+int n, m, t;
+int matrix[101][101];
+bool visited[101][101] = {
+    false,
+};
+bool visited_hasGram[101][101] = {
+    false,
+};
+int dir_i[4] = {0, 1, 0, -1};
+int dir_j[4] = {1, 0, -1, 0};
+int ans = 0;
 
 int main() {
   ios_base::sync_with_stdio(false);
@@ -30,34 +32,44 @@ int main() {
     }
   }
 
-  q.push({1, 1, 0, false});
-  while (!q.empty()) {
-    Point curPoint = q.front();
-    q.pop();
-    for (int dIdx = 0; dIdx < 4; dIdx++) {
-      int next_i = curPoint.i + dir_i[dIdx];
-      int next_j = curPoint.j + dir_j[dIdx];
-      if (next_i < 1 || next_i > n || next_j < 1 || next_j > m ||
-          visited[next_i][next_j] != 0)
-        continue;
-      if (matrix[next_i][next_j] == 1 && !curPoint.hasGram) continue;
-      visited[next_i][next_j] = curPoint.dist + 1;
-      Point nextPoint;
-      nextPoint.i = next_i;
-      nextPoint.j = next_j;
-      nextPoint.dist = curPoint.dist + 1;
-      nextPoint.hasGram =
-          (matrix[next_i][next_j] == 1) ? false : nextPoint.hasGram;
-      nextPoint.hasGram =
-          (matrix[next_i][next_j] == 2) ? true : nextPoint.hasGram;
-      q.push(nextPoint);
-    }
-  }
+  int limited = t + 1;
 
-  if(visited[n][m] == 0){
+  queue<Point> q;
+  q.push({1, 1, false});
+  visited[1][1] = true;
+  bool isFind = false;
+  while (limited--) {
+    int q_size = q.size();
+    while (q_size--) {
+      Point curPoint = q.front();
+      q.pop();
+      if (curPoint.i == n && curPoint.j == m) {
+        isFind = true;
+        break;
+      }
+      if (matrix[curPoint.i][curPoint.j] == 2) curPoint.hasGram = true;
+      for (int dir = 0; dir < 4; dir++) {
+        int next_i = curPoint.i + dir_i[dir];
+        int next_j = curPoint.j + dir_j[dir];
+        if (next_i < 1 || next_i > n || next_j < 1 || next_j > m) continue;
+        if (curPoint.hasGram && visited_hasGram[next_i][next_j]) continue;
+        if (!curPoint.hasGram &&
+            (visited[next_i][next_j] || matrix[next_i][next_j] == 1))
+          continue;
+        if (curPoint.hasGram) {
+          visited_hasGram[next_i][next_j] = true;
+        } else {
+          visited[next_i][next_j] = true;
+        }
+        q.push({next_i, next_j, curPoint.hasGram});
+      }
+    }
+    if (isFind) break;
+  }
+  if (isFind) {
+    cout << t - limited << '\n';
+  } else {
     cout << "Fail" << '\n';
-  }else{
-    cout << visited[n][m] << '\n';
   }
 
   return 0;
