@@ -1,32 +1,25 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
 void last_tokenize(const vector<string> &tokened, vector<vector<int>> tokened_result){
 
-  string str_num = "";
   for(const string &str : tokened){
     vector<int> v;
+    string str_num = "";
     for(char ch : str){
       if(ch == ','){
-        cout << "input : " << str_num << '\n';
         v.push_back(stoi(str_num));
         str_num = "";
       }else{
         str_num += ch;
       }
-      // v.push_back(stoi(str_num));
     }
+    v.push_back(stoi(str_num));
     tokened_result.push_back(v);
-  }
-  
-  for(const vector<int> &v : tokened_result){
-    for(int n : v){
-      cout << n << " ";
-    }
-    cout << '\n';
   }
 
 }
@@ -59,6 +52,7 @@ vector<int> solution(string s) {
   tokenize(s, tokened);
   vector<vector<int>> last_tokenized;
   last_tokenize(tokened, last_tokenized);
+  
 
 
   return ans;
