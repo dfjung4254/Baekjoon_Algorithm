@@ -27,6 +27,11 @@ void bruteForce(const int &userIdx, const int &banIdx, set<string> &v, const int
                 const vector<string> &banned_id) {
   if (v.size() == ban_size) {
 
+    for(const string &str : v){
+      cout << str << " ";
+    }
+    cout << '\n';
+
     /* compare */
     bool haveSame = false;
     for(set<string> s : ans){

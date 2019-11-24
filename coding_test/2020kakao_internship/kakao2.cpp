@@ -49,7 +49,10 @@ vector<int> solution(string s) {
     }
   }
 
-  sort(v.begin(), v.end(), comp);
+  // sort(v.begin(), v.end(), comp);
+  sort(v.begin(), v.end(), [](const set<int> &v1, const set<int> &v2)-> bool {
+    return v1.size() < v2.size();
+  });
 
   set<int> before;
   set<int>::iterator it;
